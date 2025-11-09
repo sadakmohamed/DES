@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔐 DES with Kerberos Simulation</title>
+  <style>
+    :root {
+      --primary: #007BFF;
+      --secondary: #28A745;
+      --neutral: #F5F7FA;
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--neutral);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      text-align: center;
+      background: var(--primary);
+      color: white;
+      padding: 1.2rem 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      background: white;
+      margin-top: 2.5rem;
+      width: 90%;
+      max-width: 600px;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 1rem;
+      color: #333;
+    }
+
+    textarea, input {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.8rem;
+      border: 1.5px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: var(--neutral);
+      color: #333;
+    }
+
+    textarea:focus, input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+    }
+
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+
+    button {
+      flex: 1;
+      border: none;
+      border-radius: 10px;
+      padding: 0.9rem;
+      font-size: 1rem;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--primary);
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+    }
+
+    #requestKeyBtn {
+      background: var(--secondary);
+      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    }
+
+    #requestKeyBtn:hover {
+      box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    #decryptBtn {
+      background: #0056b3;
+    }
+
+    footer {
+      margin-top: 2rem;
+      color: #666;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    footer span {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>🔐 DES with Kerberos Simulation</header>
+
+  <div class="container">
+    <label for="plainText">Plain Text</label>
+    <textarea id="plainText" placeholder="Enter text to encrypt..."></textarea>
+
+    <label for="cipherText">Cipher Text</label>
+    <textarea id="cipherText" placeholder="Encrypted text will appear here..."></textarea>
+
+    <label for="keyInput">Kerberos Key</label>
+    <input type="text" id="keyInput" placeholder="Click 'Request Key' or paste your own key" />
+
+    <div class="btn-group">
+      <button id="requestKeyBtn">Request Key (Kerberos)</button>
+      <button id="encryptBtn">Encrypt</button>
+      <button id="decryptBtn">Decrypt</button>
+    </div>
+  </div>
+
+  <footer>© <span>2025</span> Demo Simulation — Educational Use Only</footer>
+
+  <script>
+    // Simulated Kerberos key request
+    document.getElementById("requestKeyBtn").onclick = function() {
+      const sessionKey = "Key_" + Math.random().toString(36).substring(2, 10);
+      document.getElementById("keyInput").value = sessionKey;
+      alert("✅ Kerberos issued key: " + sessionKey);
+    };
+
+    // Simple XOR-based cipher (toy DES simulation)
+    function xorEncryptDecrypt(text, key) {
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+      }
+      return result;
+    }
+
+    // Encrypt
+    document.getElementById("encryptBtn").onclick = function() {
+      const plain = document.getElementById("plainText").value;
+      const key = document.getElementById("keyInput").value;
+      if (!plain || !key) return alert("⚠️ Please enter both plain text and key!");
+      const cipher = btoa(xorEncryptDecrypt(plain, key));
+      document.getElementById("cipherText").value = cipher;
+      alert("🔒 Encryption complete!");
+    };
+
+    // Decrypt
+    document.getElementById("decryptBtn").onclick = function() {
+      const cipher = document.getElementById("cipherText").value;
+      const key = document.getElementById("keyInput").value;
+      if (!cipher || !key) return alert("⚠️ Please enter both cipher text and key!");
+      try {
+        const decoded = atob(cipher);
+        const plain = xorEncryptDecrypt(decoded, key);
+        document.getElementById("plainText").value = plain;
+        alert("🔓 Decryption complete!");
+      } catch {
+        alert("❌ Invalid ciphertext or key!");
+      }
+    };
+  </script>
+</body>
+</html>
