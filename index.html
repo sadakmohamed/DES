@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🔐 DES with Kerberos Simulation</title>
+
+  <!-- SweetAlert2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
   <style>
     :root {
       --primary: #007BFF;
@@ -157,14 +161,23 @@
     </div>
   </div>
 
-  <footer>© <span>2025</span> Demo Simulation — Group A</footer>
+  <footer>© <span>2025</span> Somali National University — Group A </footer>
+
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
     // Simulated Kerberos key request
     document.getElementById("requestKeyBtn").onclick = function() {
       const sessionKey = "Key_" + Math.random().toString(36).substring(2, 10);
       document.getElementById("keyInput").value = sessionKey;
-      alert("✅ Kerberos issued key: " + sessionKey);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Kerberos Key Issued!',
+        text: '✅ Your new session key: ' + sessionKey,
+        confirmButtonColor: '#28A745'
+      });
     };
 
     // Simple XOR-based cipher (toy DES simulation)
@@ -180,27 +193,56 @@
     document.getElementById("encryptBtn").onclick = function() {
       const plain = document.getElementById("plainText").value;
       const key = document.getElementById("keyInput").value;
-      if (!plain || !key) return alert("⚠️ Please enter both plain text and key!");
+
+      if (!plain || !key) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'Missing Data',
+          text: '⚠️ Please enter both plain text and key!'
+        });
+      }
+
       const cipher = btoa(xorEncryptDecrypt(plain, key));
       document.getElementById("cipherText").value = cipher;
-      alert("🔒 Encryption complete!");
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Encryption Complete!',
+        text: '🔒 Your message has been securely encrypted.'
+      });
     };
 
     // Decrypt
     document.getElementById("decryptBtn").onclick = function() {
       const cipher = document.getElementById("cipherText").value;
       const key = document.getElementById("keyInput").value;
-      if (!cipher || !key) return alert("⚠️ Please enter both cipher text and key!");
+
+      if (!cipher || !key) {
+        return Swal.fire({
+          icon: 'warning',
+          title: 'Missing Data',
+          text: '⚠️ Please enter both cipher text and key!'
+        });
+      }
+
       try {
         const decoded = atob(cipher);
         const plain = xorEncryptDecrypt(decoded, key);
         document.getElementById("plainText").value = plain;
-        alert("🔓 Decryption complete!");
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Decryption Complete!',
+          text: '🔓 Your message has been decrypted successfully.'
+        });
       } catch {
-        alert("❌ Invalid ciphertext or key!");
+        Swal.fire({
+          icon: 'error',
+          title: 'Decryption Failed!',
+          text: '❌ Invalid ciphertext or key!'
+        });
       }
     };
   </script>
 </body>
 </html>
-
